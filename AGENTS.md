@@ -290,6 +290,8 @@ funcionando. Não existe instalação do padrão por git nem cópia de pasta.
 - 4. Correção transversal é feita em `packages/`, não no produto. Se o produto precisou de um contorno, o núcleo está incompleto.
 - 5. O fork não vira pull request contra a base com mudança de domínio. Melhoria de padrão volta para a base; produto fica no fork.
 - 6. Nada de `templates/`: o esqueleto é o próprio `application/`, versionado com o padrão.
+- 7. `docker compose` da raiz é o caminho de execução do fork: `make up` sobe banco, API e app. Dockerfile novo só para serviço que não seja um desses.
+- 8. Variável nova de execução entra no `.env.example` da raiz e no `environment` do compose (ou no `.env` do backend, se for só local).
 
 # Relação com o projeto
 

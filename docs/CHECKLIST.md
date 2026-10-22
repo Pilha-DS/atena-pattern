@@ -57,3 +57,11 @@ Use antes de abrir PR em qualquer projeto do ecossistema.
 - [ ] README do projeto diz como rodar, testar e configurar;
 - [ ] mudança de padrão foi feita no `atena-pattern`, não só no produto;
 - [ ] widget/componente novo documentado no README do package.
+
+## Entrega
+
+- [ ] `docker compose config` sem erro e `.env.example` com toda variável obrigatória;
+- [ ] `make up` sobe com banco novo e a migration roda no start;
+- [ ] `.dockerignore` exclui `.env`, `.venv`, `build/`, `.dart_tool/` e testes;
+- [ ] nenhuma credencial real no `.env` versionado (só exemplo com placeholder);
+- [ ] `make test` verde.

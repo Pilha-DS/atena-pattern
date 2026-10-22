@@ -18,6 +18,11 @@ Regras: feature não importa outra feature; todo texto visível vai para
 
 ## Rodar
 
+Com Docker (raiz do repositório): `make up` — o app fica em
+`http://localhost:8080` e o nginx do container encaminha `/api` para a API.
+
+Local:
+
 ```bash
 flutter pub get
 flutter run --dart-define=API_BASE_URL=http://localhost:8000/api/v1

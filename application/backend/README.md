@@ -21,6 +21,10 @@ tests/              regra de negócio e permissão
 
 ## Rodar
 
+Com Docker (raiz do repositório): `make up` — sobe banco, API e app.
+
+Local:
+
 ```bash
 cp .env.example .env      # gere SECRET_KEY: python -c "import secrets; print(secrets.token_urlsafe(48))"
 uv venv

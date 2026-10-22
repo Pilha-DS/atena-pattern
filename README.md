@@ -14,9 +14,12 @@ atena-pattern/            ← fork e renomeie
 ├── packages/
 │   ├── atena_pattern/    núcleo Python compartilhado (envelope, sessão, acesso)
 │   └── atena_ui/         package Flutter (tema, tokens, TOAT, widgets)
-└── application/
-    ├── backend/          API do projeto (FastAPI + Alembic)
-    └── frontend/         app do projeto (Flutter)
+├── application/
+│   ├── backend/          API do projeto (FastAPI + Alembic + Dockerfile)
+│   └── frontend/         app do projeto (Flutter + Dockerfile + nginx)
+├── docker-compose.yml    banco, API e app prontos para subir
+├── .env.example          variáveis do compose
+└── Makefile              atalhos (up, down, logs, migrate, test)
 ```
 
 `packages/` é o que é transversal: não conhece o produto. `application/` é o
@@ -51,10 +54,35 @@ Renomeie a identidade:
    `package:<name>/...`);
 3. `application/frontend/lib/src/core/config/app_config.dart` — nome e URL da API;
 4. `application/frontend/lib/src/app.dart` — paleta da marca;
-5. `application/backend/.env` — a partir do `.env.example`, com `SECRET_KEY`
-   gerada.
+5. `.env` na raiz — a partir do `.env.example` (`make env` já cria), com
+   `SECRET_KEY` gerada.
 
-Instale e rode:
+### Docker (recomendado)
+
+```bash
+make env     # cria .env a partir do exemplo
+make up      # banco + API + app
+```
+
+- app em `http://localhost:8080`
+- API em `http://localhost:8000` (`/docs`)
+- MySQL em `localhost:3306`
+
+`make logs` acompanha, `make migrate` aplica migration no container, `make down`
+para e `make clean` apaga o volume do banco. O `web` serve o Flutter buildado e
+encaminha `/api` para o `api` — mesma origem, sem CORS. A API roda
+`alembic upgrade head` no start, então banco novo já sobe migrado.
+
+| Serviço | Imagem | Papel |
+| --- | --- | --- |
+| `db` | `mysql:8.4` | banco com volume persistente e healthcheck |
+| `api` | `application/backend/Dockerfile` | FastAPI com migration no boot |
+| `web` | `application/frontend/Dockerfile` | Flutter web + nginx (`/api` → `api:8000`) |
+
+Por padrão o app usa a própria origem e o `web` faz proxy de `/api`. Para servir o
+app em outro domínio, defina `API_PUBLIC_URL` no `.env`.
+
+### Local, sem Docker
 
 ```bash
 # API
@@ -113,7 +141,8 @@ formatos para a mesma coisa.
       sensibilidade;
 - [x] API e app funcionando no fork, com Alembic e cliente do envelope;
 - [x] regras, `.cursor` e documentação;
-- [ ] Docker e CI de referência;
+- [x] Docker: compose com banco, API e app, mais `Makefile`;
+- [ ] CI de referência;
 - [ ] migração do Modern-Diary para o modelo de fork.
 
 O `Modern-Diary` é a referência de uso real e o primeiro produto do padrão. Até a
