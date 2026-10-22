@@ -143,7 +143,9 @@ formatos para a mesma coisa.
 - [x] regras, `.cursor` e documentação;
 - [x] Docker: compose com banco, API e app, mais `Makefile`;
 - [ ] CI de referência;
-- [ ] migração do Modern-Diary para o modelo de fork.
+- [x] migração do Modern-Diary para o modelo de fork.
 
-O `Modern-Diary` é a referência de uso real e o primeiro produto do padrão. Até a
-migração, melhorias entram aqui; a cópia dele não evolui.
+O `Modern-Diary` é a referência de uso real e o primeiro produto do padrão. Ele já é um
+fork: consome `packages/atena_pattern` e `packages/atena_ui` por caminho e mantém em
+`application/` só o domínio (agenda, notas, conhecimentos, metas, tags, busca e
+auditoria). Melhoria de padrão nasce aqui e desce para o fork.
