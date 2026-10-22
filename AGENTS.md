@@ -267,6 +267,18 @@ As regras gerais normalmente são as mais importantes. São obrigatórias.
 - 7. Não reescreva histórico de branch compartilhada (force push) sem o pedido do usuário.
 - 8. Não versione arquivo gerado, binário ou dependência baixada (`build/`, `.venv/`, `node_modules/`, `.env`). Confira o `.gitignore` antes de commitar.
 
+# Cursor
+
+As regras do editor fazem parte do padrão e ficam versionadas. Projeto sem
+`.cursor/rules/` está incompleto.
+
+- 1. `.cursor/rules/` é versionado. `.gitignore` não ignora `.cursor`; o que é local (`mcp.json`) não entra.
+- 2. Sempre existe uma regra com `alwaysApply: true` que manda ler `README.md`, `AGENTS.md` e `docs/PATTERN.md`, nesta ordem.
+- 3. A regra aponta para a fonte, não copia o conteúdo: `AGENTS.md` é a fonte; o `.mdc` só redireciona e destaca o que a regra geral não alcança.
+- 4. Regra por área usa `globs` (backend, frontend, docs) e cobre o risco daquela área: envelope, filtro de acesso, tokens de tema, paginação.
+- 5. Regra não contradiz `AGENTS.md`. Mudou a regra do padrão, muda `AGENTS.md` e o `.mdc` no mesmo commit.
+- 6. Template novo já nasce com `.cursor/rules/`; o projeto que consome pode acrescentar regra própria, nunca remover a base.
+
 # Templates
 
 Projeto novo começa copiando `templates/backend` e/ou `templates/frontend`, não
@@ -280,6 +292,7 @@ só no produto.
 O projeto que consome o padrão:
 
 - lê este arquivo e a documentação de `docs/`;
+- copia `.cursor/rules/` do template e mantém versionado;
 - registra as próprias áreas no motor de permissões;
 - define a própria paleta no `atena_ui`;
 - mantém um `AGENTS.md` próprio apenas com o que é **do domínio** dele, sem

@@ -1,0 +1,24 @@
+---
+alwaysApply: true
+---
+
+# Padrão Atena
+
+Este projeto usa o padrão do ecossistema Atena. Antes de construir, ler:
+
+1. `AGENTS.md` deste projeto — regras que valem aqui;
+2. o `AGENTS.md` do `atena-pattern` — regras base do ecossistema;
+3. `docs/BACKEND.md` do `atena-pattern` — como montar e evoluir a API.
+
+O que é transversal (envelope, erro, sessão, credenciais, níveis, permissões)
+vem da biblioteca `atena-pattern`. Não copie esses módulos para
+`app/`: importe e, quando precisar, herde.
+
+- Área nova: registre em `app/core/areas.py` com a coluna de sensibilidade.
+- Toda consulta filtra pelo usuário autenticado.
+- Toda listagem pagina no banco e devolve `meta`.
+- Toda alteração de banco é migration versionada.
+- Segredo vem de ambiente; nunca no código.
+- Regra de negócio tem teste.
+
+Antes de finalizar: `uv run pytest` verde.

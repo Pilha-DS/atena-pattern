@@ -17,6 +17,7 @@ Ele fica no projeto que consome o padrão.
 ```text
 atena-pattern/
 ├── AGENTS.md               # regras obrigatórias para quem constrói
+├── .cursor/rules/          # regras do editor (versionadas, padrão do ecossistema)
 ├── docs/
 │   ├── PATTERN.md          # arquitetura e decisões
 │   ├── BACKEND.md          # como montar uma API com a biblioteca
@@ -39,6 +40,29 @@ O modelo de entrega é **híbrido**:
 2. o que é esqueleto de projeto (Docker, Alembic, cliente HTTP do envelope,
    estrutura de features) vira **template**, copiado uma vez por projeto;
 3. as **regras** valem para qualquer projeto, independentemente da stack.
+
+Os templates já nascem com `.cursor/rules/` apontando para as regras do padrão.
+
+## Regras do editor (`.cursor`)
+
+`.cursor/rules/` é **padrão versionado**, não preferência local: é o que faz o
+editor carregar as regras certas por área antes de qualquer alteração.
+
+```text
+.cursor/rules/
+├── pattern.mdc    sempre ativo: ler README + AGENTS + PATTERN
+├── backend.mdc    em backend/** e templates/backend/**
+├── frontend.mdc   em frontend/** e templates/frontend/**
+└── docs.mdc       em docs/**, templates/** e nos arquivos de regra
+```
+
+- Todo projeto do ecossistema tem `.cursor/rules/` versionado.
+- A regra sempre ativa aponta para o `AGENTS.md` e o `README.md` do projeto; ela
+  não repete as regras, ela redireciona para a fonte.
+- Regra por área protege o que a regra geral não alcança: envelope, filtro de
+  acesso, tokens de tema e paginação.
+- `.gitignore` não ignora `.cursor`. Ignore só `.cursor` local (`mcp.json`,
+  cache) se aparecer, nunca as regras.
 
 ## Consumir
 

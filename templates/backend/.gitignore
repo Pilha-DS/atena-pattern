@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.db
+*.sqlite3
+
+# Ambiente (nunca versionar)
+.env
+.env.*
+!.env.example
+
+# Editores e SO
+.DS_Store
+.idea/
+.vscode/
+
+# Cursor: as regras são padrão e ficam versionadas
+!.cursor/

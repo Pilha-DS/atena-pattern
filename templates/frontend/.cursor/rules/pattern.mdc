@@ -1,0 +1,22 @@
+---
+alwaysApply: true
+---
+
+# Padrão Atena
+
+Este projeto usa o padrão do ecossistema Atena. Antes de construir, ler:
+
+1. `AGENTS.md` deste projeto — regras que valem aqui;
+2. o `AGENTS.md` do `atena-pattern` — regras base do ecossistema;
+3. `docs/FRONTEND.md` do `atena-pattern` — como montar e evoluir o app.
+
+Antes de criar widget, procure no `atena_ui`. Componente reutilizável nasce no
+package, não no app.
+
+- Cor, espaçamento e duração só por token do tema; identidade vem de `AppPalette`.
+- Notificação sai pelo TOAT; erro que exige decisão fica no formulário.
+- Lista é paginada e lê `meta`; cobre carregando, vazio, erro e sucesso.
+- Cliente HTTP em `core/network` lê o envelope e lança `ApiException` pelo `code`.
+- Texto visível no arquivo de strings; feature não importa outra feature.
+
+Antes de finalizar: `flutter analyze` limpo e `flutter test` verde.
