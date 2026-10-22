@@ -1,6 +1,6 @@
 ---
 description: Regras de frontend (Flutter, atena_ui)
-globs: frontend/**/*.dart, templates/frontend/**/*.dart
+globs: packages/atena_ui/**/*.dart, application/frontend/**/*.dart
 alwaysApply: false
 ---
 

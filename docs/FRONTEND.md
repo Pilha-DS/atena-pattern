@@ -31,7 +31,7 @@ objeto de navegação.
 ```yaml
 dependencies:
   atena_ui:
-    path: ../atena-pattern/frontend/atena_ui
+    path: ../../packages/atena_ui
 ```
 
 Regras:

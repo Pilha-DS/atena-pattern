@@ -7,13 +7,13 @@ o desenho.
 ## Princípio
 
 ```text
-o que é transversal  ->  atena-pattern (biblioteca / package / docs)
-o que é domínio      ->  projeto que consome
-o que é esqueleto    ->  template copiado uma vez
+o que é transversal  ->  packages/  (atena_pattern, atena_ui, docs)
+o que é domínio      ->  application/ (backend, frontend)
+o que é esqueleto    ->  também application/, já funcionando no fork
 ```
 
 O `Modern-Diary` originou o padrão. Ele é a referência de uso real, mas não é a
-fonte: depois da extração, o padrão evolui aqui e o produto consome.
+fonte: depois da extração, o padrão evolui aqui e o produto é forkado daqui.
 
 ## Backend
 
@@ -160,7 +160,8 @@ app/
 ```
 
 O app depende do package por `path` em desenvolvimento e por `git` (com tag) em
-produção. O cliente HTTP do envelope fica no **template do app**, não no package:
+produção. O cliente HTTP do envelope fica no **app** (`application/frontend`), não
+no package:
 o package não faz rede.
 
 ### Tema
@@ -182,21 +183,31 @@ MaterialApp(
 Sem `AppSemanticColors` registrado, os widgets que leem a extensão falham em
 debug. O tema é a única fonte de cor, espaçamento e duração.
 
-## Por que híbrido
+## Por que fork
 
 | Alternativa | Problema |
 | --- | --- |
-| só template | cada projeto copia e diverge; correção de permissão vira trabalho manual em N lugares |
-| só biblioteca | o esqueleto (Docker, Alembic, cliente HTTP, features) fica sem ponto de partida |
-| monorepo de exemplo | clonar e renomear não versiona a biblioteca; o projeto vira um fork |
+| só a biblioteca publicada | o esqueleto (Alembic, cliente HTTP, features) continua sem ponto de partida e a versão precisa ser publicada a cada correção |
+| só cópia de pastas | cada projeto diverge; correção de permissão vira trabalho manual em N lugares |
+| gerador de projeto | gera uma vez e perde o vínculo; melhorar o padrão não alcança quem já gerou |
 
-O híbrido separa as três responsabilidades: biblioteca para o transversal,
-template para o esqueleto, docs para a regra.
+O fork mantém padrão, esqueleto e produto no mesmo repositório, com as três
+responsabilidades separadas por pasta:
+
+- `packages/` — transversal, consumido por caminho, não conhece o produto;
+- `application/` — o produto, único lugar com domínio;
+- `docs/` + `AGENTS.md` — a regra que vale para os dois.
+
+Correção transversal é feita em `packages/` e vale na hora para o produto, sem
+publicar versão. Melhoria que serve a outro projeto volta para a base; domínio
+fica no fork.
 
 ## Limites conhecidos
 
 - A biblioteca não gera migrations do projeto: ela expõe `Base.metadata`.
-- O package não tem cliente HTTP: isso é do template do app.
+- O package não tem cliente HTTP: isso é do app.
 - Nomes de tabela do núcleo estão congelados para não quebrar bancos existentes.
+- `application/` é ponto de partida: uma vez que o domínio cresce, ele pertence
+  ao fork e deixa de acompanhar a base automaticamente.
 - A migração do Modern-Diary é uma etapa separada; até lá, a cópia dele não
   evolui.

@@ -277,22 +277,26 @@ As regras do editor fazem parte do padrão e ficam versionadas. Projeto sem
 - 3. A regra aponta para a fonte, não copia o conteúdo: `AGENTS.md` é a fonte; o `.mdc` só redireciona e destaca o que a regra geral não alcança.
 - 4. Regra por área usa `globs` (backend, frontend, docs) e cobre o risco daquela área: envelope, filtro de acesso, tokens de tema, paginação.
 - 5. Regra não contradiz `AGENTS.md`. Mudou a regra do padrão, muda `AGENTS.md` e o `.mdc` no mesmo commit.
-- 6. Template novo já nasce com `.cursor/rules/`; o projeto que consome pode acrescentar regra própria, nunca remover a base.
+- 6. `application/` já nasce com `.cursor/rules/` próprio; o fork pode acrescentar regra, nunca remover a base.
 
-# Templates
+# Repositório (fork)
 
-Projeto novo começa copiando `templates/backend` e/ou `templates/frontend`, não
-recriando a estrutura de memória. O template é um ponto de partida: depois de
-copiado, ele pertence ao projeto e evolui lá. Correção que vale para todos os
-projetos volta para a biblioteca, para o package ou para o template — nunca fica
-só no produto.
+O modelo é **fork**: um repositório por projeto, já com o padrão e o esqueleto
+funcionando. Não existe instalação do padrão por git nem cópia de pasta.
+
+- 1. O padrão vive em `packages/` (`atena_pattern`, `atena_ui`) e não conhece o produto.
+- 2. O produto vive em `application/` (`backend`, `frontend`) e é o único lugar onde entra domínio.
+- 3. `application/*` consome `packages/*` por caminho (`tool.uv.sources`, `pubspec.yaml`), nunca por versão publicada.
+- 4. Correção transversal é feita em `packages/`, não no produto. Se o produto precisou de um contorno, o núcleo está incompleto.
+- 5. O fork não vira pull request contra a base com mudança de domínio. Melhoria de padrão volta para a base; produto fica no fork.
+- 6. Nada de `templates/`: o esqueleto é o próprio `application/`, versionado com o padrão.
 
 # Relação com o projeto
 
 O projeto que consome o padrão:
 
 - lê este arquivo e a documentação de `docs/`;
-- copia `.cursor/rules/` do template e mantém versionado;
+- mantém `.cursor/rules/` versionado;
 - registra as próprias áreas no motor de permissões;
 - define a própria paleta no `atena_ui`;
 - mantém um `AGENTS.md` próprio apenas com o que é **do domínio** dele, sem

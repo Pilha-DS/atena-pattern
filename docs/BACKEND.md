@@ -1,22 +1,26 @@
 # Backend com o padrão
 
-Como montar uma API nova usando `atena-pattern`. O exemplo cria uma área
-`notes` com um modelo `Note`.
+Como evoluir a API que já existe em `application/backend`. O exemplo cria uma
+área `notes` com um modelo `Note`.
 
-## 1. Projeto e dependência
+O esqueleto já vem pronto no fork: `create_app`, `Settings`, `areas`, Alembic,
+`.env.example` e um teste. O trabalho aqui é acrescentar domínio.
 
-```bash
-uv init minha-api
-cd minha-api
-uv add "atena-pattern @ git+ssh://git@github.com/Pilha-DS/atena-pattern.git@main#subdirectory=backend"
-uv add "uvicorn[standard]" alembic "pymysql>=1.1"
-```
+## 1. Dependência
 
-Em desenvolvimento local:
+`application/backend/pyproject.toml` já aponta para o núcleo por caminho:
 
 ```toml
 [tool.uv.sources]
-atena-pattern = { path = "../atena-pattern/backend", editable = true }
+atena-pattern = { path = "../../packages/atena_pattern", editable = true }
+```
+
+Não publique nem instale o padrão por git: editar `packages/atena_pattern`
+reflete em `application/backend` na hora.
+
+```bash
+cd application/backend
+uv venv && uv sync
 ```
 
 ## 2. Configuração
@@ -27,14 +31,14 @@ from atena_pattern import AthenaSettings
 
 
 class Settings(AthenaSettings):
-    app_name: str = "Minha API"
+    app_name: str = "Atena App"
     # configurações só deste projeto
 ```
 
 Variáveis de ambiente mínimas (`.env.example`):
 
 ```bash
-APP_NAME=Minha API
+APP_NAME=Atena App
 ENVIRONMENT=development
 DATABASE_URL=mysql+pymysql://user:senha@localhost:3306/minha_api
 # python -c "import secrets; print(secrets.token_urlsafe(48))"
@@ -259,7 +263,7 @@ register_areas()
 app = create_app(
     Settings(),
     routers=[notes_router],
-    title="Minha API",
+    title="Atena App",
 )
 ```
 

@@ -1,127 +1,120 @@
 # atena-pattern
 
-O padrão de desenvolvimento do ecossistema Atena, separado do produto que o
-originou. Aqui vive o que **não é de domínio** e pode ser usado por projetos
-totalmente diferentes:
+Base de projetos do ecossistema Atena. **Fork, renomeie e construa.**
 
-- **regras** — `AGENTS.md` e `docs/`: como o software é construído;
-- **backend** — biblioteca Python `atena-pattern`: envelope, erro, paginação,
-  sessão, credenciais, níveis de sensibilidade e motor de permissões;
-- **frontend** — package Flutter `atena_ui`: tema, tokens, TOAT e widgets.
-
-O domínio (notas, agenda, metas, catálogo de qualquer produto) **não entra aqui**.
-Ele fica no projeto que consome o padrão.
-
-## Estrutura
+Um fork já vem pronto: a API e o app rodam, com o padrão aplicado — envelope
+único, sessão, credenciais, permissões por área, tema, TOAT e cliente HTTP. O
+domínio (notas, agenda, metas, catálogo) você constrói no `application/`.
 
 ```text
-atena-pattern/
-├── AGENTS.md               # regras obrigatórias para quem constrói
-├── .cursor/rules/          # regras do editor (versionadas, padrão do ecossistema)
-├── docs/
-│   ├── PATTERN.md          # arquitetura e decisões
-│   ├── BACKEND.md          # como montar uma API com a biblioteca
-│   ├── FRONTEND.md         # como montar um app com o package
-│   └── CHECKLIST.md        # conformidade de projeto e de PR
-├── backend/                # atena-pattern (Python, FastAPI + SQLAlchemy)
-│   ├── atena_pattern/
-│   └── tests/
-├── frontend/
-│   └── atena_ui/           # package Flutter (um único package)
-└── templates/
-    ├── backend/            # esqueleto de API (config, áreas, Alembic)
-    └── frontend/           # esqueleto de app (tema, TOAT, cliente HTTP)
+atena-pattern/            ← fork e renomeie
+├── AGENTS.md             regras obrigatórias
+├── .cursor/rules/        regras do editor (versionadas)
+├── docs/                 arquitetura, backend, frontend, checklist
+├── packages/
+│   ├── atena_pattern/    núcleo Python compartilhado (envelope, sessão, acesso)
+│   └── atena_ui/         package Flutter (tema, tokens, TOAT, widgets)
+└── application/
+    ├── backend/          API do projeto (FastAPI + Alembic)
+    └── frontend/         app do projeto (Flutter)
 ```
 
-O modelo de entrega é **híbrido**:
+`packages/` é o que é transversal: não conhece o produto. `application/` é o
+produto: é onde o domínio entra. Cada camada só importa a de baixo.
 
-1. o que é transversal vira **biblioteca instalável** (backend) e **package**
-   (frontend), para a correção valer em todos os projetos;
-2. o que é esqueleto de projeto (Docker, Alembic, cliente HTTP do envelope,
-   estrutura de features) vira **template**, copiado uma vez por projeto;
-3. as **regras** valem para qualquer projeto, independentemente da stack.
+## Por que fork
 
-Os templates já nascem com `.cursor/rules/` apontando para as regras do padrão.
+O fork é o modelo de distribuição. Você recebe o padrão inteiro, com o esqueleto
+já funcionando, e evolui o produto no mesmo repositório.
+
+| Alternativa | Problema |
+| --- | --- |
+| instalar a biblioteca por git | o esqueleto (Alembic, cliente HTTP, features) continua sem ponto de partida |
+| copiar pastas soltas | cada projeto diverge; correção de permissão vira trabalho manual em N lugares |
+| monorepo de exemplo | clonar e renomear não versiona o padrão junto com o produto |
+
+O fork mantém as três coisas juntas: padrão, esqueleto e produto. Uma correção no
+núcleo vale para o produto na hora, sem publicar versão.
+
+## Começar
+
+```bash
+git clone git@github.com:Pilha-DS/atena-pattern.git meu-projeto
+cd meu-projeto
+rm -rf .git && git init
+```
+
+Renomeie a identidade:
+
+1. `application/backend/pyproject.toml` — `name` do projeto;
+2. `application/frontend/pubspec.yaml` — `name` do app (e os imports
+   `package:<name>/...`);
+3. `application/frontend/lib/src/core/config/app_config.dart` — nome e URL da API;
+4. `application/frontend/lib/src/app.dart` — paleta da marca;
+5. `application/backend/.env` — a partir do `.env.example`, com `SECRET_KEY`
+   gerada.
+
+Instale e rode:
+
+```bash
+# API
+cd application/backend
+cp .env.example .env
+uv venv && uv sync
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload
+
+# App
+cd application/frontend
+flutter pub get
+flutter run
+```
+
+A primeira requisição a `/api/v1/auth/register` cria o usuário ADMIN. `/docs`
+mostra a API.
+
+## Como o padrão se liga ao produto
+
+- `application/backend` importa `atena_pattern` por caminho
+  (`tool.uv.sources`), então mexer no núcleo reflete no produto sem reinstalar.
+- `application/frontend` importa `atena_ui` por caminho no `pubspec.yaml`.
+- Área nova no domínio: registre em `application/backend/app/core/areas.py`.
+- Widget novo: nasce em `packages/atena_ui`, não no app.
+
+Detalhe de cada camada em `docs/BACKEND.md` e `docs/FRONTEND.md`.
 
 ## Regras do editor (`.cursor`)
 
-`.cursor/rules/` é **padrão versionado**, não preferência local: é o que faz o
-editor carregar as regras certas por área antes de qualquer alteração.
+`.cursor/rules/` é padrão versionado, não preferência local: é o que faz o editor
+carregar a regra certa por área antes de qualquer alteração.
 
 ```text
 .cursor/rules/
 ├── pattern.mdc    sempre ativo: ler README + AGENTS + PATTERN
-├── backend.mdc    em backend/** e templates/backend/**
-├── frontend.mdc   em frontend/** e templates/frontend/**
-└── docs.mdc       em docs/**, templates/** e nos arquivos de regra
+├── backend.mdc    em packages/atena_pattern/** e application/backend/**
+├── frontend.mdc   em packages/atena_ui/** e application/frontend/**
+└── docs.mdc       em docs/** e nos arquivos de regra
 ```
 
-- Todo projeto do ecossistema tem `.cursor/rules/` versionado.
-- A regra sempre ativa aponta para o `AGENTS.md` e o `README.md` do projeto; ela
-  não repete as regras, ela redireciona para a fonte.
-- Regra por área protege o que a regra geral não alcança: envelope, filtro de
-  acesso, tokens de tema e paginação.
-- `.gitignore` não ignora `.cursor`. Ignore só `.cursor` local (`mcp.json`,
-  cache) se aparecer, nunca as regras.
-
-## Consumir
-
-### Backend
-
-```toml
-[project]
-dependencies = [
-  "atena-pattern @ git+ssh://git@github.com/Pilha-DS/atena-pattern.git@main#subdirectory=backend",
-]
-```
-
-Em desenvolvimento local:
-
-```toml
-[tool.uv.sources]
-atena-pattern = { path = "../atena-pattern/backend", editable = true }
-```
-
-### Frontend
-
-```yaml
-dependencies:
-  atena_ui:
-    git:
-      url: git@github.com:Pilha-DS/atena-pattern.git
-      path: frontend/atena_ui
-      ref: main
-```
-
-Ou, em desenvolvimento, `path: ../atena-pattern/frontend/atena_ui`.
-
-## Começar um projeto novo
-
-```bash
-cp -r atena-pattern/templates/backend minha-api
-cp -r atena-pattern/templates/frontend meu-app
-```
-
-Cada template tem o próprio README com o passo a passo. Para o detalhe de cada
-camada, use `docs/BACKEND.md` e `docs/FRONTEND.md`.
+A regra sempre ativa não repete as regras: ela redireciona para `AGENTS.md`.
 
 ## Regra de ouro
 
-Um padrão por assunto. Se o projeto já tem um padrão para aquilo, use o
-existente e siga exatamente a forma dele. Se ainda não tem, crie **um** padrão
-reutilizável (aqui, na biblioteca ou no package), registre e passe a usá-lo.
-Nunca conviva com dois formatos para a mesma coisa.
+Um padrão por assunto. Se o padrão existe (envelope, TOAT, erro, estado de tela,
+nome de pasta), use-o e siga exatamente a forma dele. Se não existe, crie **um**
+padrão reutilizável (em `packages/`) e passe a usá-lo. Nunca conviva com dois
+formatos para a mesma coisa.
 
 ## Estado atual
 
-- [x] biblioteca backend com envelope, sessão, usuários, credenciais e
+- [x] núcleo `atena_pattern`: envelope, sessão, usuários, credenciais e
       permissões por área;
-- [x] package `atena_ui` com tema parametrizável, TOAT, widgets e níveis de
+- [x] package `atena_ui`: tema parametrizável, TOAT, widgets e níveis de
       sensibilidade;
-- [x] regras e documentação do padrão;
-- [x] templates de backend (com Alembic) e de frontend (com cliente do envelope);
-- [ ] Docker/CI de referência nos templates;
-- [ ] migração do Modern-Diary para consumir a biblioteca e o package.
+- [x] API e app funcionando no fork, com Alembic e cliente do envelope;
+- [x] regras, `.cursor` e documentação;
+- [ ] Docker e CI de referência;
+- [ ] migração do Modern-Diary para o modelo de fork.
 
-O `Modern-Diary` é o **primeiro consumidor** e a referência de uso real. Até a
-migração dele, melhorias de padrão entram aqui; a cópia dele não evolui.
+O `Modern-Diary` é a referência de uso real e o primeiro produto do padrão. Até a
+migração, melhorias entram aqui; a cópia dele não evolui.

@@ -1,0 +1,24 @@
+name: atena_app
+description: Aplicativo do projeto.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.5
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  # O package do padrão mora no mesmo repositório.
+  atena_ui:
+    path: ../../packages/atena_ui
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

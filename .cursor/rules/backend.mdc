@@ -1,6 +1,6 @@
 ---
 description: Regras de backend (FastAPI, SQLAlchemy, permissões)
-globs: backend/**/*.py, templates/backend/**/*.py
+globs: packages/atena_pattern/**/*.py, application/backend/**/*.py
 alwaysApply: false
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Regras de documentação e padrão
-globs: docs/**, templates/**, AGENTS.md, README.md
+globs: docs/**, AGENTS.md, README.md, .cursor/**
 alwaysApply: false
 ---
 
@@ -14,4 +14,4 @@ alwaysApply: false
 - Documento novo só quando o assunto não cabe em `PATTERN.md`, `BACKEND.md`,
   `FRONTEND.md` ou `CHECKLIST.md`.
 - Template é ponto de partida: copiado, pertence ao projeto. Correção que vale
-  para todos volta para a biblioteca, o package ou o template.
+  para todos volta para o package, para o núcleo ou para a base.
